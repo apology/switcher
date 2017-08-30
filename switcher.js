@@ -65,6 +65,7 @@ class Switcher {
 		out.innerHTML = filtered.map((t, i) => (
 			`
 			<div class="row ${(i === selected) ? 'selected' : ''}">
+				<img class="favicon" src="${t.favIconUrl}">
 				<span class="title">${t.title}</span>
 				<span class="url">${t.url}</span>
 			</div>

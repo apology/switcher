@@ -37,3 +37,9 @@ body {
 .row .title {
 	font-weight: 600;
 }
+.row .favicon {
+	float: left;
+	width: 16px;
+	height: 16px;
+	margin: 10px 20px 10px 0;
+}
