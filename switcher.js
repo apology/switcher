@@ -29,7 +29,10 @@ class Switcher {
 
 		document.addEventListener('keydown', (e) => {
 			if (e.key === 'Escape') close();
-			if (e.key === 'Enter') this.commit();
+			if (e.key === 'Enter') {
+				e.preventDefault();
+				this.commit();
+			}
 			if (e.key === 'ArrowDown') this.update({ selected: Math.min(this.state.selected + 1, this.state.filtered.length - 1) });
 			if (e.key === 'ArrowUp') this.update({ selected: Math.max(this.state.selected - 1, 0) });
 		});
