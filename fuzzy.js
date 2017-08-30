@@ -15,8 +15,8 @@ const fuzzy = (string, query, debug) => {
 
 			// Multipliers
 			if (i - 1 === last) {
-				score += (1 << streak);
 				streak++;
+				score += (1 << streak);
 			}
 			if (!prev.match(/[a-zA-Z0-9]/)) score += 1;
 
