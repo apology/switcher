@@ -1,0 +1,77 @@
+class Switcher {
+	constructor() {
+		this.state = {
+			tabs: [],
+			filtered: [],
+			selected: 0,
+			query: '',
+		}
+
+		this.populate();
+		this.bind();
+	}
+
+	populate() {
+		chrome.tabs.query({}, (tabs) => {
+			tabs = tabs.filter(t => t.url !== window.location.href);
+			const filtered = this.filter(tabs, this.state.query);
+			this.update({ tabs, filtered });
+		});
+	}
+
+	bind() {
+		const input = document.getElementById('input');
+		input.addEventListener('input', () => {
+			const query = input.value;
+			const filtered = this.filter(this.state.tabs, query);
+			this.update({ query, filtered });
+		});
+
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') close();
+			if (e.key === 'Enter') this.commit();
+		});
+
+		chrome.windows.onFocusChanged.addListener((id) => {
+			// chrome.windows.getCurrent(current => (current !== id) && close());
+		});
+	}
+
+	update(next) {
+		Object.keys(next).forEach(k => this.state[k] = next[k]);
+		this.render();
+	}
+
+	filter(tabs, query) {
+		if (!query || !query.length) return tabs;
+
+		const scored = tabs.map(t => t);
+		scored.forEach((t) => {
+			t.score = fuzzy((t.title + '~' + t.url).toLowerCase(), query.toLowerCase());
+		});
+
+		return scored.filter(t => t.score > 0).sort((a, b) => b.score - a.score);
+	}
+
+	render() {
+		console.log(this.state);
+		const { filtered } = this.state;
+		const out = document.getElementById('out');
+		out.innerHTML = filtered.map(t => `{${t.score || 0}} ${t.title}\n${t.url}`).join('\n\n');
+	}
+
+	commit() {
+		if (this.state.selected >= this.state.filtered.length) return;
+		const tab = this.state.filtered[this.state.selected];
+
+		chrome.tabs.update(tab.id, { active: true });
+		chrome.windows.update(tab.windowId, { focused: true });
+		this.close();
+	}
+
+	close() {
+		chrome.windows.getCurrent(w => chrome.windows.remove(w.id));
+	}
+}
+
+const switcher = new Switcher();
