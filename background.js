@@ -13,7 +13,7 @@ chrome.commands.onCommand.addListener((command) => {
 				url: chrome.extension.getURL('switcher.html'),
 				width: WIDTH,
 				height: HEIGHT,
-				top: bounds.height / 2 - HEIGHT / 2,
+				top: bounds.height / 2 - HEIGHT * 0.6,
 				left: bounds.width / 2 - WIDTH / 2,
 				type: 'popup',
 			});
